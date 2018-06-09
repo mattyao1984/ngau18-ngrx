@@ -3,6 +3,10 @@ import { UserService } from '../user.service';
 import { User } from '../models/user';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, ActivatedRoute } from '@angular/router';
+import { Store, select } from '@ngrx/store';
+import { State } from '../+state/reducers';
+import { filter } from 'rxjs/operators';
+import { GetUsersAction } from '../+state/actions/user.actions';
 
 @Component({
   selector: 'app-user-search',
@@ -17,18 +21,25 @@ export class UserSearchComponent implements OnInit {
   constructor(
     private userService: UserService,
     private router: Router,
-    private activatedRoute: ActivatedRoute
+    private activatedRoute: ActivatedRoute,
+    private store: Store<State>,
   ) { }
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource();
+    this.store.pipe(
+      select(state => state.user.users.users),
+      filter(users => !!users),
+    )
+    .subscribe(users => {
+      this.dataSource.data = Object.values(users);
+    });
+
     this.getUsers();
   }
 
   getUsers() {
-    this.userService.getUsers$().subscribe(e => {
-      this.dataSource.data = e;
-    });
+    this.store.dispatch(new GetUsersAction());
   }
 
   applyFilter(filterValue: string) {
