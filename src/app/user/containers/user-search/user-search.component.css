@@ -1,0 +1,21 @@
+table {
+    width: 100%;
+}
+
+.mat-form-field {
+    font-size: 14px;
+    width: 100%;
+}
+
+.flex {
+    display: flex;
+}
+
+.container {
+    min-width: 150px;
+    max-width: 500px;
+    display: flex;
+    flex-direction: row;
+    margin: 0 auto;
+    justify-content: center;
+}
