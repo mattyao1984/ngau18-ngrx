@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../user.service';
-import { User } from '../models/user';
+import { UserService } from '../../user.service';
+import { User } from '../../models/user';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store, select } from '@ngrx/store';
-import { State } from '../+state/reducers';
-import { filter } from 'rxjs/operators';
-import { GetUsersAction } from '../+state/actions/user.actions';
+import { State } from '../../+state/reducers';
+import { GetUsersAction } from '../../+state/actions/user.actions';
+import * as userSelectors from '../../+state/selectors/user.selectors';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-user-search',
@@ -18,6 +19,8 @@ export class UserSearchComponent implements OnInit {
   dataSource: MatTableDataSource<User>;
   displayedColumns = ['userId', 'firstName', 'lastName', 'displayName', 'buttons'];
 
+  loading$: Observable<boolean>;
+
   constructor(
     private userService: UserService,
     private router: Router,
@@ -27,13 +30,12 @@ export class UserSearchComponent implements OnInit {
 
   ngOnInit() {
     this.dataSource = new MatTableDataSource();
-    this.store.pipe(
-      select(state => state.user.users.users),
-      filter(users => !!users),
-    )
-    .subscribe(users => {
-      this.dataSource.data = Object.values(users);
-    });
+    this.store.pipe(select(userSelectors.selectUsers))
+      .subscribe(users => {
+        this.dataSource.data = users;
+      });
+
+    this.loading$ = this.store.pipe(select(userSelectors.selectLoading));
 
     this.getUsers();
   }

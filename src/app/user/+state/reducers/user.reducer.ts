@@ -48,3 +48,6 @@ export function reducer(state = initialState, action: UserActions): State {
       return state;
   }
 }
+
+export const getUsers = (state: State) => state.userKeys.map(e => state.users[e]);
+export const getLoading = (state: State) => state.loading;
