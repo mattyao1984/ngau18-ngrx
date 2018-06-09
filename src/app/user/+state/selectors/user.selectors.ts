@@ -8,3 +8,8 @@ export const selectUserState = createSelector(selectUserFeatureState, (state) =>
 
 export const selectUsers = createSelector(selectUserState, fromUser.getUsers);
 export const selectLoading = createSelector(selectUserState, fromUser.getLoading);
+export const selectUserKeys = createSelector(selectUserState, fromUser.getUserKeys);
+export const selectSelectedUser = createSelector(selectUserState, fromUser.getSelectedUser);
+export const selectSaving = createSelector(selectUserState, fromUser.getSaving);
+
+export const selectAnyUsers = createSelector(selectUserState, (state) => state.userKeys.length > 0);

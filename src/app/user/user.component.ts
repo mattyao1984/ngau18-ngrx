@@ -1,4 +1,8 @@
 import { Component, OnInit } from '@angular/core';
+import { Store, select } from '@ngrx/store';
+import { State } from './+state/reducers';
+import { GetUsersAction } from './+state/actions/user.actions';
+import * as userSelectors from './+state/selectors/user.selectors';
 
 @Component({
   selector: 'app-user',
@@ -7,9 +11,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class UserComponent implements OnInit {
 
-  constructor() { }
+  constructor(private store: Store<State>) { }
 
   ngOnInit() {
+    this.store.pipe(
+      select(userSelectors.selectAnyUsers)
+    ).subscribe(any => {
+      if (!any) {
+        this.store.dispatch(new GetUsersAction());
+      }
+    });
+
   }
 
 }

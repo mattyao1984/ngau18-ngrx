@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { UserService } from '../../user.service';
 import { User } from '../../models/user';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { State } from '../../+state/reducers';
-import { GetUsersAction } from '../../+state/actions/user.actions';
+import { GetUsersAction, DeleteUserAction } from '../../+state/actions/user.actions';
 import * as userSelectors from '../../+state/selectors/user.selectors';
 import { Observable } from 'rxjs';
 
@@ -22,7 +21,6 @@ export class UserSearchComponent implements OnInit {
   loading$: Observable<boolean>;
 
   constructor(
-    private userService: UserService,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private store: Store<State>,
@@ -37,7 +35,6 @@ export class UserSearchComponent implements OnInit {
 
     this.loading$ = this.store.pipe(select(userSelectors.selectLoading));
 
-    this.getUsers();
   }
 
   getUsers() {
@@ -59,6 +56,6 @@ export class UserSearchComponent implements OnInit {
   }
 
   onDelete(userId: number) {
-    this.userService.deleteUser$(userId).subscribe(e => this.getUsers());
+    this.store.dispatch(new DeleteUserAction(userId.toString()));
   }
 }
