@@ -1,3 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
 
 @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
+body {
+    margin: 0;
+    margin-top: 1vh;
+}
+
+app-root {
+    min-height: 100vh;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 99vh;
+}
+
+.content {
+    flex: 1;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+}
+
+.content>*:not(router-outlet) {
+    flex: 1;
+    display: block;
+}

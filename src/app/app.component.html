@@ -1,10 +1,11 @@
-<div class="mat-typography">
+<div class="mat-typography wrapper">
 
     <div class="logo">
         <img src="assets/logo.png" />
     </div>
 
-    <div class="header" style="text-align:center">
+    <div class="header"
+         style="text-align:center">
         <h1>
             Reactive State with NGRX
         </h1>
@@ -22,14 +23,18 @@
            routerLinkActive="active">Users</a>
     </mat-toolbar>
 
-    <router-outlet></router-outlet>
+    <div class="content">
+        <router-outlet></router-outlet>
+    </div>
+
+    <div class="footer">
+        <mat-toolbar color='primary'>
+            <span class='spacer'></span>
+            <h3>
+                © Copyright <a href="https://www.zware.com.au">Z Ware Development</a> {{ year }}
+            </h3>
+            <span class='spacer'></span>
+        </mat-toolbar>
+    </div>
 
 </div>
-
-<mat-toolbar color='primary'>
-    <span class='spacer'></span>
-    <h3>
-        © Copyright <a href="https://www.zware.com.au">Z Ware Development</a> {{ year }}
-    </h3>
-    <span class='spacer'></span>
-</mat-toolbar>
