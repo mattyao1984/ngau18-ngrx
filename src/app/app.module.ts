@@ -8,6 +8,7 @@ import { NoopAnimationsModule, BrowserAnimationsModule } from '@angular/platform
 
 import { HttpClientModule } from '@angular/common/http';
 import { MaterialModule } from './lib/material/material.module';
+import { AppStateModule } from './+state/app-state.module';
 
 @NgModule({
   declarations: [
@@ -19,7 +20,9 @@ import { MaterialModule } from './lib/material/material.module';
 
     BrowserAnimationsModule,
     HttpClientModule,
-    MaterialModule
+    MaterialModule,
+    
+    AppStateModule
   ],
   providers: [],
   bootstrap: [AppComponent]
