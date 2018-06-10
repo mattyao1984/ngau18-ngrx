@@ -1,41 +1,35 @@
 import { UserActions, UserActionTypes } from '../actions/user.actions';
 import { User } from '../../models/user';
+import { EntityState, EntityAdapter, createEntityAdapter } from '@ngrx/entity';
+import { IdSelector } from '@ngrx/entity/src/models';
 
-export interface State {
-  users: { [id: string]: User },
-  userKeys: string[];
-  selectedUserKey: string;
+export interface State extends EntityState<User> {
+  selectedUserId: string;
 
   loading: boolean;
   saving: boolean;
 }
 
-export const initialState: State = {
-  users: {},
-  userKeys: [],
-  selectedUserKey: null,
+export const userSelector: IdSelector<User> = (user: User) => user.userId.toString();
+export const adapter: EntityAdapter<User> = createEntityAdapter<User>({
+  selectId: userSelector
+});
+
+export const initialState: State = adapter.getInitialState({
+  selectedUserId: null,
 
   loading: false,
   saving: false
-};
+});
 
 export function reducer(state = initialState, action: UserActions): State {
   switch (action.type) {
 
     case UserActionTypes.LOAD_USERS: {
+      let newState = adapter.addAll(action.payload, state);
+      newState.loading = false;
 
-      const payload = action.payload;
-      const users = payload.reduce((acc, cur, i) => {
-        acc[cur.userId] = cur;
-        return acc;
-      }, {});
-
-      return {
-        ...state,
-        users,
-        userKeys: Object.keys(users),
-        loading: false
-      }
+      return newState;
 
     }
 
@@ -50,32 +44,25 @@ export function reducer(state = initialState, action: UserActions): State {
 
     case UserActionTypes.DELETE_USER: {
 
-      const userKeys = [...state.userKeys];
-      const userKey = action.payload;
+      const newState = adapter.removeOne(action.payload, state);
 
-      const index = userKeys.indexOf(userKey);
-      if (index > -1) {
-        userKeys.splice(index, 1);
-      }
+      return newState;
 
-      return {
-        ...state,
-        userKeys
-      }
     }
 
     case UserActionTypes.SELECT_USER: {
 
       const userKey = action.payload;
-      let selectedUserKey = null;
+      let selectedUserId = null;
+      const ids: any = state.ids;
 
-      if (state.userKeys.includes(userKey)) {
-        selectedUserKey = userKey;
+      if (ids.includes(userKey)) {
+        selectedUserId = userKey;
       }
 
       return {
         ...state,
-        selectedUserKey
+        selectedUserId
       }
 
     }
@@ -85,26 +72,12 @@ export function reducer(state = initialState, action: UserActions): State {
       const payload = action.payload;
       const userKey = payload.userId.toString();
 
-      const users = { ...state.users };
-      const userKeys = [...state.userKeys];
-      let selectedUserKey = state.selectedUserKey;
-
-      users[userKey] = payload;
-
-      if (!state.userKeys.includes(userKey)) {
-        userKeys.push(userKey);
-      }
-
+      const newState = adapter.upsertOne(payload, state);
       if (state.saving) {
-        selectedUserKey = userKey;
+        newState.selectedUserId = userKey;
       }
 
-      return {
-        ...state,
-        users,
-        userKeys,
-        selectedUserKey
-      }
+      return newState;
 
     }
 
@@ -130,8 +103,22 @@ export function reducer(state = initialState, action: UserActions): State {
   }
 }
 
-export const getUsers = (state: State) => state.userKeys.map(e => state.users[e]);
+const {
+  // select the array of user ids
+  selectIds: selectUserIds,
+
+  // select the dictionary of user entities
+  selectEntities: selectUserEntities,
+
+  // select the array of users
+  selectAll: selectAllUsers,
+
+  // select the total user count
+  selectTotal: selectUserTotal,
+} = adapter.getSelectors();
+
+export const getUsers = selectAllUsers;
 export const getLoading = (state: State) => state.loading;
-export const getUserKeys = (state: State) => state.userKeys;
-export const getSelectedUser = (state: State) => state.selectedUserKey ? state.users[state.selectedUserKey] : null;
+export const getUserKeys = selectUserIds;
+export const getSelectedUser = (state: State) => state.selectedUserId ? state.entities[state.selectedUserId] : null;
 export const getSaving = (state: State) => state.saving;

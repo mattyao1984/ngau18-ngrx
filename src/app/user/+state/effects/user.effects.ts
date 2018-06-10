@@ -40,7 +40,7 @@ export class UserEffects {
     withLatestFrom(this.store.pipe(select(userSelectors.selectUserKeys))),
     switchMap(([action, keys]) => {
 
-      if (keys.includes(action.payload)) {
+      if ((keys as any).includes(action.payload)) {
         return of();
       }
 

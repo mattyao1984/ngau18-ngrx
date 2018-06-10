@@ -12,4 +12,4 @@ export const selectUserKeys = createSelector(selectUserState, fromUser.getUserKe
 export const selectSelectedUser = createSelector(selectUserState, fromUser.getSelectedUser);
 export const selectSaving = createSelector(selectUserState, fromUser.getSaving);
 
-export const selectAnyUsers = createSelector(selectUserState, (state) => state.userKeys.length > 0);
+export const selectAnyUsers = createSelector(selectUserState, (state) => state.ids.length > 0);
